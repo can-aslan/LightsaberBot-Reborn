@@ -1,4 +1,5 @@
 const { Client, Intents } = require('discord.js');
+const { exchangeRates } = require('exchange-rates-api');
 const client = new Client({ 
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
 });
@@ -9,7 +10,7 @@ const ACTIVITY_TIME = 30 * S_TO_MS;
 
 client.on('ready', () => {
   console.log(`Bot ${client.user.tag} is online.`);
-
+  
   client.user.setStatus("online");
   setInterval(() => {
     let curActivity = Math.floor(Math.random() * ACTIVITY_LIST.length);
@@ -45,12 +46,18 @@ client.on('messageCreate', (msg) => {
   switch (userCmd) {
     case 'help':
       msg.reply({
-        content:  `\`\`\`List of Commands:\n+ l!help: Displays the list of commands.\n+ l!lightsaber: Introduction.\n+ /echo: Echoes your message\n+ /pingus: Replies with Pongus!\`\`\``
+        content:  `\`\`\`List of Commands:\n+ l!help: Displays the list of commands.\n+ l!lightsaber: Introduction.\n+ l!usd: Shows the latest accessible USD to TRY exhange rate.\n+ /echo: Echoes your message\n+ /pingus: Replies with Pongus!\`\`\``
       });
       break;
     case 'lightsaber':
       msg.reply({
         content: `Hello \`${msg.author.username}\`, I am LightsaberBot!`
+      });
+      break;
+    case 'usd':
+      const USD_TRY = exchangeRates().latest().base('USD').symbols('TRY').fetch();
+      msg.channel.send({
+        content: `1 USD = ${USD_TRY} TRY.`
       });
       break;
     default:
