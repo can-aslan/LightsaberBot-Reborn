@@ -1,5 +1,7 @@
-const { Client, Intents } = require('discord.js');
+const { Client, Intents, Channel, MessageEmbed  } = require('discord.js');
 const currencyConverter = require('currency-converter-lt');
+
+const BOT_COLOR_THEME = ['#71fef4', '#e50d01', '#9440ba', '#20ff51', '#1104ff'];;
 const AVAILABLE_CUR = ["USD", "EUR", "GBP"];
 const client = new Client({ 
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
@@ -8,6 +10,7 @@ const PREFIX = process.env['CMD_PREFIX'];
 const ACTIVITY_LIST = ["Duel of the Fates", "The Imperial March", "Darth Vader Theme", "Jar Jar Binks", "Obi-Wan Kenobi", "Cantina Band"];
 const S_TO_MS = 1000;
 const ACTIVITY_TIME = 30 * S_TO_MS;
+//const ICON_URL = '';
 
 client.on('ready', () => {
   console.log(`Bot ${client.user.tag} is online.`);
@@ -46,13 +49,18 @@ client.on('messageCreate', (msg) => {
   const userCmd = msgCmd.substr(2);
   switch (userCmd) {
     case 'help':
-      msg.reply({
-        content:  `\`\`\`List of Commands:
-\n+ l!help: Displays the list of commands.
-\n+ l!lightsaber: Introduction.
-\n+ l!exc <>: Shows the latest accessible USD to TRY exhange rate.
-\n+ /echo: Echoes your message\n+ /pingus: Replies with Pongus!\`\`\``
-      });
+      const helpEmbed = new MessageEmbed()
+      .setColor(BOT_COLOR_THEME[Math.floor(Math.random() * BOT_COLOR_THEME.length)])
+      .setTitle('List of Commands:')
+      .addFields(
+        { name: 'l!help', value: 'Displays the list of commands.' },
+        { name: 'l!lightsaber', value: 'Introduction.' },
+        { name: 'l!exc <CURRENCY>', value: 'Displays the latest accessible <CURRENCY> to TRY exhange rate.' },
+        { name: '/echo', value: 'Echoes your message.' },
+        { name: '/pingus', value: 'Replies with Pongus!' }
+      );
+      
+      msg.channel.send({embeds: [helpEmbed]});
       break;
     case 'lightsaber':
       msg.reply({
