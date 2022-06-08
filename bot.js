@@ -57,7 +57,7 @@ client.on('messageCreate', (msg) => {
       .addFields(
         { name: 'l!help', value: 'Displays the list of commands.' },
         { name: 'l!lightsaber', value: 'Introduction.' },
-        { name: 'l!exc <CURRENCY>', value: 'Displays the latest accessible <CURRENCY> to TRY exhange rate.' },
+        { name: 'l!exc <CURRENCY>', value: 'Displays the latest accessible <CURRENCY> to TRY exchange rate.' },
         { name: '/echo', value: 'Echoes your message.' },
         { name: '/pingus', value: 'Replies with Pongus!' }
       );
