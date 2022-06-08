@@ -1,5 +1,6 @@
 const { Client, Intents } = require('discord.js');
-const { exchangeRates } = require('exchange-rates-api');
+const currencyConverter = require('currency-converter-lt');
+
 const client = new Client({ 
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
 });
@@ -46,7 +47,12 @@ client.on('messageCreate', (msg) => {
   switch (userCmd) {
     case 'help':
       msg.reply({
-        content:  `\`\`\`List of Commands:\n+ l!help: Displays the list of commands.\n+ l!lightsaber: Introduction.\n+ l!usd: Shows the latest accessible USD to TRY exhange rate.\n+ /echo: Echoes your message\n+ /pingus: Replies with Pongus!\`\`\``
+        content:  `\`\`\`List of Commands:
+\n+ l!help: Displays the list of commands.
+\n+ l!lightsaber: Introduction.
+\n+ l!usd: Shows the latest accessible USD to TRY exhange rate.
+\n+ l!eur: Shows the latest accessible EUR to TRY exhange rate.
+\n+ /echo: Echoes your message\n+ /pingus: Replies with Pongus!\`\`\``
       });
       break;
     case 'lightsaber':
@@ -55,10 +61,10 @@ client.on('messageCreate', (msg) => {
       });
       break;
     case 'usd':
-      const USD_TRY = exchangeRates().latest().base('USD').symbols('TRY').fetch();
-      msg.channel.send({
-        content: `1 USD = ${USD_TRY} TRY.`
-      });
+      getUSD_TRY(msg);
+      break;
+    case 'eur':
+      getEUR_TRY(msg);
       break;
     default:
       msg.channel.send({
@@ -67,6 +73,34 @@ client.on('messageCreate', (msg) => {
       break;
   }
 });
+
+function getUSD_TRY(msg) {
+  const USD_TRY_Converter = new currencyConverter({
+    from: "USD",
+    to: "TRY",
+    amount: 1
+  });
+  
+  USD_TRY_Converter.convert().then(function(result) {
+    msg.channel.send({
+      content: `1 USD = ${result} TRY.`
+    });
+  });
+}
+
+function getEUR_TRY(msg) {
+  const USD_TRY_Converter = new currencyConverter({
+    from: "EUR",
+    to: "TRY",
+    amount: 1
+  });
+  
+  USD_TRY_Converter.convert().then(function(result) {
+    msg.channel.send({
+      content: `1 EUR = ${result} TRY.`
+    });
+  });
+}
 
 console.log("Trying connection...");
 client.login(process.env['TOKEN']);
