@@ -102,7 +102,7 @@ function getExchange(msg, currency = "USD") { // Default currency is set to USD
   
   curConverter.convert().then(function(result) {
     const exchangeEmbed = new MessageEmbed().setColor(EXCHANGE_COLOR).setTitle(`1 ${currencyName} = ${result} Turkish Lira.`);
-    msg.channel.send({embeds: [exchangeEmbed]});
+    msg.channel.send({embeds: [exchangeEmbed]}).then(sentEmbed => sentEmbed.react('💸'));
   });
 }
 
