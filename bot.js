@@ -1,6 +1,6 @@
 const { Client, Intents } = require('discord.js');
 const currencyConverter = require('currency-converter-lt');
-
+const AVAILABLE_CUR = ["USD", "EUR", "GBP"];
 const client = new Client({ 
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
 });
@@ -50,8 +50,7 @@ client.on('messageCreate', (msg) => {
         content:  `\`\`\`List of Commands:
 \n+ l!help: Displays the list of commands.
 \n+ l!lightsaber: Introduction.
-\n+ l!usd: Shows the latest accessible USD to TRY exhange rate.
-\n+ l!eur: Shows the latest accessible EUR to TRY exhange rate.
+\n+ l!exc <>: Shows the latest accessible USD to TRY exhange rate.
 \n+ /echo: Echoes your message\n+ /pingus: Replies with Pongus!\`\`\``
       });
       break;
@@ -60,11 +59,8 @@ client.on('messageCreate', (msg) => {
         content: `Hello \`${msg.author.username}\`, I am LightsaberBot!`
       });
       break;
-    case 'usd':
-      getUSD_TRY(msg);
-      break;
-    case 'eur':
-      getEUR_TRY(msg);
+    case 'exc':
+      getExchange(msg, msgArgs[1]);
       break;
     default:
       msg.channel.send({
@@ -74,30 +70,24 @@ client.on('messageCreate', (msg) => {
   }
 });
 
-function getUSD_TRY(msg) {
-  const USD_TRY_Converter = new currencyConverter({
-    from: "USD",
-    to: "TRY",
-    amount: 1
-  });
-  
-  USD_TRY_Converter.convert().then(function(result) {
-    msg.channel.send({
-      content: `1 USD = ${result} TRY.`
-    });
-  });
-}
+function getExchange(msg, currency = "USD") { // Default currency is set to USD
 
-function getEUR_TRY(msg) {
+  if ( !AVAILABLE_CUR.includes(currency) ) {
+    msg.channel.send({
+      content: `The currency you entered is invalid. Supported currencies: ${AVAILABLE_CUR}`
+    });
+    return;
+  }
+  
   const USD_TRY_Converter = new currencyConverter({
-    from: "EUR",
+    from: currency,
     to: "TRY",
     amount: 1
   });
   
   USD_TRY_Converter.convert().then(function(result) {
     msg.channel.send({
-      content: `1 EUR = ${result} TRY.`
+      content: `1 ${currency} = ${result} TRY.`
     });
   });
 }
