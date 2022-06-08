@@ -11,7 +11,7 @@
 
 ## Commands
 | Command | Description |
-| :---: | :--- |
+| :--- | :--- |
 | `l!help` | Displays the list of commands. |
 | `l!lightsaber` | Introduction. |
 | `l!exc <CURRENCY>` | Displays the latest accessible `CURRENCY` to `TRY` exchange rate. |
