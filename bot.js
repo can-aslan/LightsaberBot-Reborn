@@ -1,8 +1,10 @@
 const { Client, Intents, Channel, MessageEmbed  } = require('discord.js');
 const currencyConverter = require('currency-converter-lt');
 
-const BOT_COLOR_THEME = ['#71fef4', '#e50d01', '#9440ba', '#20ff51', '#1104ff'];;
-const AVAILABLE_CUR = ["USD", "EUR", "GBP"];
+const BOT_COLOR_THEME = ['#71fef4', '#e50d01', '#9440ba', '#20ff51', '#1104ff'];; // Cyan, Blue, Purple, Red, Green (not in order)
+const EXCHANGE_COLOR = '#006e00'; // Green
+const ERROR_COLOR = '#8f0000';
+const AVAILABLE_CUR = ["AFN", "ALL", "DZD", "AOA", "ARS", "AMD", "AWG", "AUD", "AZN", "BSD", "BHD", "BBD", "BDT", "BYR", "BZD", "BMD", "BTN", "XBT", "BOB", "BAM", "BWP", "BRL", "BND", "BGN", "BIF", "XPF", "KHR", "CAD", "CVE", "KYD", "FCFA", "CLP", "CLF", "CNY", "CNY", "COP", "CF", "CDF", "CRC", "HRK", "CUC", "CZK", "DKK", "DJF", "DOP", "XCD", "EGP", "ETB", "FJD", "GMD", "GBP", "GEL", "GHS", "GTQ", "GNF", "GYD", "HTG", "HNL", "HKD", "HUF", "ISK", "INR", "IDR", "IRR", "IQD", "ILS", "JMD", "JPY", "JOD", "KZT", "KES", "KWD", "KGS", "LAK", "LBP", "LSL", "LRD", "LYD", "MOP", "MKD", "MGA" , "MWK", "MYR", "MVR", "MRO", "MUR", "MXN", "MDL", "MAD", "MZN", "MMK", "NAD", "NPR", "ANG", "NZD", "NIO", "NGN", "NOK", "OMR", "PKR", "PAB", "PGK", "PYG", "PHP", "PLN", "QAR", "RON", "RUB", "RWF", "SVC", "SAR", "RSD", "SCR", "SLL", "SGD", "SBD", "SOS", "ZAR", "KRW", "VES", "LKR", "SDG", "SRD", "SZL", "SEK", "CHF", "TJS", "TZS", "THB", "TOP", "TTD", "TND", "TMT", "UGX", "UAH", "AED", "USD", "UYU", "UZS", "VND", "XOF", "YER", "ZMW", "ETH", "EUR", "LTC", "TWD", "PEN"];
 const client = new Client({ 
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
 });
@@ -79,24 +81,28 @@ client.on('messageCreate', (msg) => {
 });
 
 function getExchange(msg, currency = "USD") { // Default currency is set to USD
-
+  currency = currency.toUpperCase();
+  
   if ( !AVAILABLE_CUR.includes(currency) ) {
-    msg.channel.send({
-      content: `The currency you entered is invalid. Supported currencies: ${AVAILABLE_CUR}`
-    });
+    const exchangeErrorEmbed = new MessageEmbed()
+    .setColor(ERROR_COLOR)
+    .setDescription(`The currency you entered is invalid. Supported currencies:\n\n ${AVAILABLE_CUR.join(', ')}.`);
+    
+    msg.channel.send({embeds: [exchangeErrorEmbed]});
     return;
   }
   
-  const USD_TRY_Converter = new currencyConverter({
+  const curConverter = new currencyConverter({
     from: currency,
     to: "TRY",
     amount: 1
   });
+
+  const currencyName = curConverter.currencyName(currency);
   
-  USD_TRY_Converter.convert().then(function(result) {
-    msg.channel.send({
-      content: `1 ${currency} = ${result} TRY.`
-    });
+  curConverter.convert().then(function(result) {
+    const exchangeEmbed = new MessageEmbed().setColor(EXCHANGE_COLOR).setTitle(`1 ${currencyName} = ${result} Turkish Lira.`);
+    msg.channel.send({embeds: [exchangeEmbed]});
   });
 }
 
