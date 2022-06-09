@@ -50,6 +50,7 @@ client.on('messageCreate', (msg) => {
 
   const userCmd = msgCmd.substr(2);
   switch (userCmd) {
+    // l!help: Displays the list of commands.
     case 'help':
       const helpEmbed = new MessageEmbed()
       .setColor(BOT_COLOR_THEME[Math.floor(Math.random() * BOT_COLOR_THEME.length)])
@@ -64,12 +65,15 @@ client.on('messageCreate', (msg) => {
       
       msg.channel.send({embeds: [helpEmbed]});
       break;
+    // l!lightsaber: Introduction.
     case 'lightsaber':
       msg.reply({
         content: `Hello \`${msg.author.username}\`, I am LightsaberBot!`
       });
       break;
-    case 'exc':
+    // l!exc list: Lists the supported currencies for displaying the exchange rates with TRY.
+    // l!exc <CURRENCY>: Displays the latest accessible CURRENCY to TRY exchange rate.
+    case 'exc':        
       getExchange(msg, msgArgs[1]);
       break;
     default:
@@ -82,6 +86,14 @@ client.on('messageCreate', (msg) => {
 
 function getExchange(msg, currency = "USD") { // Default currency is set to USD
   currency = currency.toUpperCase();
+  if ( currency == "LIST" ) {
+    const excListEmbed = new MessageEmbed()
+    .setColor(BOT_COLOR_THEME[Math.floor(Math.random() * BOT_COLOR_THEME.length)])
+    .setDescription(`Supported currencies:\n\n ${AVAILABLE_CUR.join(', ')}.`);
+    
+    msg.channel.send({embeds: [excListEmbed]});
+    return;
+  }
   
   if ( !AVAILABLE_CUR.includes(currency) ) {
     const exchangeErrorEmbed = new MessageEmbed()

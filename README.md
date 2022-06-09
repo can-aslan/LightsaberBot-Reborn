@@ -15,6 +15,7 @@
 | `l!help` | Displays the list of commands. |
 | `l!lightsaber` | Introduction. |
 | `l!exc <CURRENCY>` | Displays the latest accessible `CURRENCY` to `TRY` exchange rate. |
+| `l!exc list` | Lists the supported currencies for displaying the exchange rates with `TRY`. |
 | `/echo` | Echoes your message. |
 | `/pingus` | Replies with Pongus! |
 
