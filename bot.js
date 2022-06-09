@@ -58,8 +58,8 @@ client.on('messageCreate', (msg) => {
       .addFields(
         { name: 'l!help', value: 'Displays the list of commands.' },
         { name: 'l!lightsaber', value: 'Introduction.' },
-        { name: 'l!exc list', value: 'Lists the supported currencies for displaying the exchange rates with TRY.' },
         { name: 'l!exc <CURRENCY>', value: 'Displays the latest accessible <CURRENCY> to TRY exchange rate.' },
+        { name: 'l!exc list', value: 'Lists the supported currencies for displaying the exchange rates with TRY.' },
         { name: '/echo', value: 'Echoes your message.' },
         { name: '/pingus', value: 'Replies with Pongus!' }
       );
