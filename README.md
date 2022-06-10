@@ -16,6 +16,7 @@
 | `l!lightsaber` | Introduction. |
 | `l!exc <CURRENCY>` | Displays the latest accessible `CURRENCY` to `TRY` exchange rate. |
 | `l!exc list` | Lists the supported currencies for displaying the exchange rates with `TRY`. |
+| `l!exc` | Displays the latest accessible `USD`, `EUR` and `GBP` to `TRY` exchange rates. |
 | `/echo` | Echoes your message. |
 | `/pingus` | Replies with Pongus! |
 
