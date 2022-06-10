@@ -74,6 +74,7 @@ client.on('messageCreate', (msg) => {
       break;
     // l!exc list: Lists the supported currencies for displaying the exchange rates with TRY.
     // l!exc <CURRENCY>: Displays the latest accessible CURRENCY to TRY exchange rate.
+    // l!exc: Displays the latest accessible USD, EUR and GBP to TRY exchange rates.
     case 'exc':        
       getExchange(msg, msgArgs[1]);
       break;
@@ -85,8 +86,37 @@ client.on('messageCreate', (msg) => {
   }
 });
 
-function getExchange(msg, currency = "USD") { // Default currency is set to USD
+function getExchange(msg, currency) { // Default currency is set to USD
+  // l!exc
+  if (!currency) {
+    const usdConverter = new currencyConverter({from: "USD", to: "TRY", amount: 1});
+    const eurConverter = new currencyConverter({from: "EUR", to: "TRY", amount: 1});
+    const gbpConverter = new currencyConverter({from: "GBP", to: "TRY", amount: 1});
+
+    const usdName = usdConverter.currencyName("USD");
+    const eurName = eurConverter.currencyName("EUR");
+    const gbpName = gbpConverter.currencyName("GBP");
+    
+    usdConverter.convert().then(usd => {
+      const usdEmbed = new MessageEmbed().setColor(EXCHANGE_COLOR).setTitle(`1 ${usdName} = ${usd} Turkish Lira.`);
+      msg.channel.send({embeds: [usdEmbed]});
+    });
+    
+    eurConverter.convert().then(eur => {
+      const eurEmbed = new MessageEmbed().setColor(EXCHANGE_COLOR).setTitle(`1 ${eurName} = ${eur} Turkish Lira.`);
+      msg.channel.send({embeds: [eurEmbed]});
+    });
+    
+    gbpConverter.convert().then(gbp => {
+      const gbpEmbed = new MessageEmbed().setColor(EXCHANGE_COLOR).setTitle(`1 ${gbpName} = ${gbp} Turkish Lira.`);
+      msg.channel.send({embeds: [gbpEmbed]});
+    });
+    
+    return;
+  }
+  
   currency = currency.toUpperCase();
+  // l!exc list
   if ( currency == "LIST" ) {
     const excListEmbed = new MessageEmbed()
     .setColor(BOT_COLOR_THEME[Math.floor(Math.random() * BOT_COLOR_THEME.length)])
@@ -95,7 +125,8 @@ function getExchange(msg, currency = "USD") { // Default currency is set to USD
     msg.channel.send({embeds: [excListEmbed]});
     return;
   }
-  
+
+  // l!exc <CURRENCY>: Invalid <CURRENCY>
   if ( !AVAILABLE_CUR.includes(currency) ) {
     const exchangeErrorEmbed = new MessageEmbed()
     .setColor(ERROR_COLOR)
@@ -104,7 +135,8 @@ function getExchange(msg, currency = "USD") { // Default currency is set to USD
     msg.channel.send({embeds: [exchangeErrorEmbed]});
     return;
   }
-  
+
+  // l!exc <CURRENCY>:
   const curConverter = new currencyConverter({
     from: currency,
     to: "TRY",
