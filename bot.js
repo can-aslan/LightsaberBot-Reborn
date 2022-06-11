@@ -48,6 +48,7 @@ client.on('messageCreate', (msg) => {
   
   if ( msgCmd.substr(0, 2) !== PREFIX ) return;
 
+  // COMMANDS
   const userCmd = msgCmd.substr(2);
   switch (userCmd) {
     // l!help: Displays the list of commands.
@@ -69,9 +70,7 @@ client.on('messageCreate', (msg) => {
       break;
     // l!lightsaber: Introduction.
     case 'lightsaber':
-      msg.reply({
-        content: `Hello \`${msg.author.username}\`, I am LightsaberBot!`
-      });
+      msg.reply({content: `Hello \`${msg.author.username}\`, I am LightsaberBot!`});
       break;
     // l!exc list: Lists the supported currencies for displaying the exchange rates with TRY.
     // l!exc <CURRENCY>: Displays the latest accessible CURRENCY to TRY exchange rate.
@@ -80,14 +79,13 @@ client.on('messageCreate', (msg) => {
       getExchange(msg, msgArgs[1]);
       break;
     default:
-      msg.channel.send({
-        content: "Unrecognized command. Please check `l!help`."
-      });
+      msg.channel.send({content: "Unrecognized command. Please check `l!help`."});
       break;
   }
 });
 
 function getExchange(msg, currency) { // Default currency is set to USD
+  // --------------------------------------------
   // l!exc
   if (!currency) {
     const usdConverter = new currencyConverter({from: "USD", to: "TRY", amount: 1});
@@ -115,8 +113,11 @@ function getExchange(msg, currency) { // Default currency is set to USD
     
     return;
   }
+  // --------------------------------------------
   
   currency = currency.toUpperCase();
+
+  // --------------------------------------------
   // l!exc list
   if ( currency == "LIST" ) {
     const excListEmbed = new MessageEmbed()
@@ -126,7 +127,9 @@ function getExchange(msg, currency) { // Default currency is set to USD
     msg.channel.send({embeds: [excListEmbed]});
     return;
   }
+  // --------------------------------------------
 
+  // --------------------------------------------
   // l!exc <CURRENCY>: Invalid <CURRENCY>
   if ( !AVAILABLE_CUR.includes(currency) ) {
     const exchangeErrorEmbed = new MessageEmbed()
@@ -136,20 +139,18 @@ function getExchange(msg, currency) { // Default currency is set to USD
     msg.channel.send({embeds: [exchangeErrorEmbed]});
     return;
   }
+  // --------------------------------------------
 
+  // --------------------------------------------
   // l!exc <CURRENCY>:
-  const curConverter = new currencyConverter({
-    from: currency,
-    to: "TRY",
-    amount: 1
-  });
-
+  const curConverter = new currencyConverter({from: currency, to: "TRY", amount: 1});
   const currencyName = curConverter.currencyName(currency);
   
   curConverter.convert().then(function(result) {
     const exchangeEmbed = new MessageEmbed().setColor(EXCHANGE_COLOR).setTitle(`1 ${currencyName} = ${result} Turkish Lira.`);
     msg.channel.send({embeds: [exchangeEmbed]}).then(sentEmbed => sentEmbed.react('💸'));
   });
+  // --------------------------------------------
 }
 
 console.log("Trying connection...");
