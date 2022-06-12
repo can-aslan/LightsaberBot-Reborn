@@ -59,6 +59,7 @@ client.on('messageCreate', (msg) => {
       .addFields(
         { name: 'l!help', value: 'Displays the list of commands.' },
         { name: 'l!lightsaber', value: 'Introduction.' },
+        { name: 'l!exc2 <CURRENCY1> <CURRENCY2>', value: 'Displays the latest accessible <CURRENCY1> to <CURRENCY2> exchange rate.' },
         { name: 'l!exc <CURRENCY>', value: 'Displays the latest accessible <CURRENCY> to TRY exchange rate.' },
         { name: 'l!exc list', value: 'Lists the supported currencies for displaying the exchange rates with TRY.' },
         { name: 'l!exc', value: 'Displays the latest accessible USD, EUR and GBP to TRY exchange rates.' },
@@ -78,13 +79,58 @@ client.on('messageCreate', (msg) => {
     case 'exc':        
       getExchange(msg, msgArgs[1]);
       break;
+    // l!exc2 <CURRENCY1> <CURRENCY2>: Displays the latest accessible CURRENCY1 to CURRENCY2 exchange rate.
+    case 'exc2':        
+      getExchange2(msg, msgArgs[1], msgArgs[2]);
+      break;
     default:
       msg.channel.send({content: "Unrecognized command. Please check `l!help`."});
       break;
   }
 });
 
-function getExchange(msg, currency) { // Default currency is set to USD
+function getExchange2(msg, currency1, currency2) {
+  // --------------------------------------------
+  // ERROR: Less than two arguments are given.
+  if (!currency1 || !currency2) {
+    const argumentErrorEmbed = new MessageEmbed()
+    .setColor(ERROR_COLOR)
+    .setDescription(`Invalid use.\nCorrect use: l!exc2 <CURRENCY1> <CURRENCY2>\n\n Supported currencies:\n\n ${AVAILABLE_CUR.join(', ')}.`);
+    
+    msg.channel.send({embeds: [argumentErrorEmbed]});
+    return;
+  }
+  // --------------------------------------------
+
+  currency1 = currency1.toUpperCase();
+  currency2 = currency2.toUpperCase();
+  
+  // --------------------------------------------
+  // Either CURRENCY1 or CURRENCY2 is invalid
+  if ( !AVAILABLE_CUR.includes(currency1) || !AVAILABLE_CUR.includes(currency2) ) {
+    const exchangeErrorEmbed = new MessageEmbed()
+    .setColor(ERROR_COLOR)
+    .setDescription(`At least one of the currencies you entered is invalid. Supported currencies:\n\n ${AVAILABLE_CUR.join(', ')}.`);
+    
+    msg.channel.send({embeds: [exchangeErrorEmbed]});
+    return;
+  }
+  // --------------------------------------------
+
+  // --------------------------------------------
+  // l!exc2 <CURRENCY1> <CURRENCY2>:
+  const curConverter = new currencyConverter({from: currency1, to: currency2, amount: 1});
+  const currency1Name = curConverter.currencyName(currency1);
+  const currency2Name = curConverter.currencyName(currency2);
+  
+  curConverter.convert().then(function(result) {
+    const exchangeEmbed = new MessageEmbed().setColor(EXCHANGE_COLOR).setTitle(`1 ${currency1Name} = ${result} ${currency2Name}.`);
+    msg.channel.send({embeds: [exchangeEmbed]}).then(sentEmbed => sentEmbed.react('💸'));
+  });
+  // --------------------------------------------
+}
+
+function getExchange(msg, currency) {
   // --------------------------------------------
   // l!exc
   if (!currency) {
