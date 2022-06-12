@@ -14,6 +14,7 @@
 | :--- | :--- |
 | `l!help` | Displays the list of commands. |
 | `l!lightsaber` | Introduction. |
+| `l!exc2 <CURRENCY1> <CURRENCY2>` | Displays the latest accessible `<CURRENCY1>` to `<CURRENCY2>` exchange rate. |
 | `l!exc <CURRENCY>` | Displays the latest accessible `CURRENCY` to `TRY` exchange rate. |
 | `l!exc list` | Lists the supported currencies for displaying the exchange rates with `TRY`. |
 | `l!exc` | Displays the latest accessible `USD`, `EUR` and `GBP` to `TRY` exchange rates. |
