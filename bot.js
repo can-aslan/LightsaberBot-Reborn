@@ -12,7 +12,6 @@ const PREFIX = process.env['CMD_PREFIX'];
 const ACTIVITY_LIST = ["Duel of the Fates", "The Imperial March", "Darth Vader Theme", "Jar Jar Binks", "Obi-Wan Kenobi", "Cantina Band"];
 const S_TO_MS = 1000;
 const ACTIVITY_TIME = 30 * S_TO_MS;
-//const ICON_URL = '';
 
 client.on('ready', () => {
   console.log(`Bot ${client.user.tag} is online.`);
