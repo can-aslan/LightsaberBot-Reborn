@@ -1,5 +1,8 @@
+// Libraries
 const { Client, Intents, Channel, MessageEmbed  } = require('discord.js');
 const currencyConverter = require('currency-converter-lt');
+
+// Constants
 const BOT_COLOR_THEME = ['#71fef4', '#e50d01', '#9440ba', '#20ff51', '#1104ff'];; // Cyan, Blue, Purple, Red, Green (not in order)
 const EXCHANGE_COLOR = '#006e00'; // Green
 const ERROR_COLOR = '#8f0000'; // Red
