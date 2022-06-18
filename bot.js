@@ -79,11 +79,12 @@ client.on('messageCreate', (msg) => {
     case 'lightsaber':
       msg.reply({content: `Hello \`${msg.author.username}\`, I am LightsaberBot!`});
       break;
+    // l!exc: Displays the latest accessible USD, EUR and GBP to TRY exchange rates.
     // l!exc list: Lists the supported currencies for displaying the exchange rates with TRY.
     // l!exc <CURRENCY>: Displays the latest accessible CURRENCY to TRY exchange rate.
-    // l!exc: Displays the latest accessible USD, EUR and GBP to TRY exchange rates.
+    // l!exc <CURRENCY> <AMOUNT>: Displays the latest accessible <AMOUNT> TRY in <CURRENCY>.
     case 'exc':        
-      getExchange(msg, msgArgs[1]);
+      getExchange(msg, msgArgs[1], msgArgs[2]);
       break;
     // l!exc2 <CURRENCY1> <CURRENCY2>: Displays the latest accessible CURRENCY1 to CURRENCY2 exchange rate.
     case 'exc2':        
@@ -136,7 +137,7 @@ function getExchange2(msg, currency1, currency2) {
   // --------------------------------------------
 }
 
-function getExchange(msg, currency) {
+function getExchange(msg, currency, amount) {
   // --------------------------------------------
   // l!exc
   if (!currency) {
@@ -195,12 +196,30 @@ function getExchange(msg, currency) {
 
   // --------------------------------------------
   // l!exc <CURRENCY>:
-  const curConverter = new currencyConverter({from: currency, to: "TRY", amount: 1});
-  const currencyName = curConverter.currencyName(currency);
+  if (!amount) {
+    const curConverter = new currencyConverter({from: currency, to: "TRY", amount: 1});
+    const currencyName = curConverter.currencyName(currency);
+    
+    curConverter.convert().then(function(result) {
+      const exchangeEmbed = new MessageEmbed().setColor(EXCHANGE_COLOR).setTitle(`1 ${currencyName} = ${result} Turkish Lira.`);
+      msg.channel.send({embeds: [exchangeEmbed]}).then(sentEmbed => sentEmbed.react('💸'));
+    });
+    return;
+  }
+  // --------------------------------------------
+
+  amount = parseFloat(amount);
+
+  // if (amount == NaN || amount == null) amount = 1;
   
-  curConverter.convert().then(function(result) {
-    const exchangeEmbed = new MessageEmbed().setColor(EXCHANGE_COLOR).setTitle(`1 ${currencyName} = ${result} Turkish Lira.`);
-    msg.channel.send({embeds: [exchangeEmbed]}).then(sentEmbed => sentEmbed.react('💸'));
+  // --------------------------------------------
+  // l!exc <CURRENCY> <AMOUNT>: Displays the latest accessible <AMOUNT> TRY in <CURRENCY>.
+  const worthConverter = new currencyConverter({from: "TRY", to: currency, amount: amount});
+  const worthCurName = worthConverter.currencyName(currency);
+  
+  worthConverter.convert().then(function(result) {
+    const worthEmbed = new MessageEmbed().setColor(EXCHANGE_COLOR).setTitle(`${amount} Turkish Lira = ${result} ${worthCurName}.`);
+    msg.channel.send({embeds: [worthEmbed]}).then(sentEmbed => sentEmbed.react('💸'));
   });
   // --------------------------------------------
 }
