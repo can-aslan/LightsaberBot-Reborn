@@ -1,3 +1,4 @@
+// ======================================================================================================================================================
 // Libraries
 const { Client, Intents, Channel, MessageEmbed  } = require('discord.js');
 const currencyConverter = require('currency-converter-lt');
@@ -19,6 +20,7 @@ const ACTIVITY_LIST = ["Duel of the Fates", "The Imperial March", "Darth Vader T
 // Miscellaneous
 const S_TO_MS = 1000;
 const ACTIVITY_TIME = 30 * S_TO_MS;
+// ======================================================================================================================================================
 
 client.on('ready', () => {
   console.log(`Bot ${client.user.tag} is online.`);
