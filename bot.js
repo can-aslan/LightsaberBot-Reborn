@@ -2,6 +2,7 @@
 // Libraries
 const { Client, Intents, Channel, MessageEmbed  } = require('discord.js');
 const currencyConverter = require('currency-converter-lt');
+const { handler } = require('vatsim-data-handler');
 
 // Constants
 // Color Themes
@@ -93,11 +94,64 @@ client.on('messageCreate', (msg) => {
     case 'exc2':        
       getExchange2(msg, msgArgs[1], msgArgs[2]);
       break;
+    case 'pilot':
+      getPilot(msg, msgArgs[1]);
+      break;
+    case 'flight':
+      getFlight(msg, msgArgs[1]);
+      break;
     default:
       msg.channel.send({content: "Unrecognized command. Please check `l!help`."});
       break;
   }
 });
+
+function getPilot(msg, vatsimID) {
+  handler.getClientDetails(vatsimID).then(val => {
+    // If VATSIM pilot is not connected to the network or does not exist
+    if (!val) {
+      const pilotErrorEmbed = new MessageEmbed()
+      .setColor(ERROR_COLOR)
+      .setDescription(`VATSIM pilot with id ${vatsimID} is either not connected to the network or does not exist.`);
+      
+      msg.channel.send({embeds: [pilotErrorEmbed]});
+      return;
+    }
+
+    // Pilot is found
+    console.log(val);
+  });
+}
+
+function getFlight(msg, callsign) {
+  handler.getFlightInfo(callsign).then(val => {
+    // If VATSIM pilot is not connected to the network or does not exist
+    if (!val) {
+      const flightErrorEmbed = new MessageEmbed()
+      .setColor(ERROR_COLOR)
+      .setDescription(`VATSIM flight with callsign ${callsign} does not exist.`);
+      
+      msg.channel.send({embeds: [flightErrorEmbed]});
+      return;
+    }
+
+    // Flight is found
+    console.log(val);
+    const pilotName = val.name;
+    const flightCallsign = val.callsign;
+    const flightAltitude = val.altitude;
+    const aircraftType = val.flight_plan.aircraft_short;
+    
+    const flightEmbed = new MessageEmbed()
+    .setColor(BOT_COLOR_THEME[Math.floor(Math.random() * BOT_COLOR_THEME.length)])
+    .setTitle(`${flightCallsign}`)
+    .setAuthor
+    .setDescription(`VATSIM flight with callsign ${callsign} does not exist.`);
+    
+    msg.channel.send({embeds: [flightEmbed]});
+    return;
+  });
+}
 
 function getExchange2(msg, currency1, currency2) {
   // --------------------------------------------
