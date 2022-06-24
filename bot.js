@@ -9,6 +9,7 @@ const { handler } = require('vatsim-data-handler');
 const BOT_COLOR_THEME = ['#71fef4', '#e50d01', '#9440ba', '#20ff51', '#1104ff'];; // Cyan, Blue, Purple, Red, Green (not in order)
 const EXCHANGE_COLOR = '#006e00'; // Green
 const ERROR_COLOR = '#8f0000'; // Red
+const VATSIM_COLOR = '#90f4ff';
 
 // Command Related
 const PREFIX = "l!";
@@ -106,6 +107,16 @@ client.on('messageCreate', (msg) => {
   }
 });
 
+/*
+function convertToUtcPlus3(hour) {
+  return (hour + 3) % 24;
+}
+*/
+
+function getFlightRemainingTime() {
+  
+}
+
 function getPilot(msg, vatsimID) {
   handler.getClientDetails(vatsimID).then(val => {
     // If VATSIM pilot is not connected to the network or does not exist
@@ -123,7 +134,7 @@ function getPilot(msg, vatsimID) {
   });
 }
 
-function getFlight(msg, callsign) {
+function getFlight(msg, callsign) {  
   handler.getFlightInfo(callsign).then(val => {
     // If VATSIM pilot is not connected to the network or does not exist
     if (!val) {
@@ -136,17 +147,27 @@ function getFlight(msg, callsign) {
     }
 
     // Flight is found
+    // const utc3Hour = toString(convertToUtcPlus3(parseInt(val.last_updated.substr(11, 13))));
+    // const lastUpdated = utc3Hour + val.last_updated.substr(13, 19);
     console.log(val);
-    const pilotName = val.name;
-    const flightCallsign = val.callsign;
-    const flightAltitude = val.altitude;
-    const aircraftType = val.flight_plan.aircraft_short;
     
     const flightEmbed = new MessageEmbed()
-    .setColor(BOT_COLOR_THEME[Math.floor(Math.random() * BOT_COLOR_THEME.length)])
-    .setTitle(`${flightCallsign}`)
-    .setAuthor
-    .setDescription(`VATSIM flight with callsign ${callsign} does not exist.`);
+    .setColor(VATSIM_COLOR)
+    .setTitle(`${val.callsign} [${val.flight_plan.departure} -> ${val.flight_plan.arrival}]`)
+    .setURL('http://www.vattastic.com/')
+    //.setDescription(`VATSIM flight with callsign ${callsign} found.`)
+    .addFields(
+      { name: 'Pilot Name', value: `${val.name}` },
+      { name: 'Aircraft Type', value: `${val.flight_plan.aircraft_short}`, inline: true },
+  		{ name: 'Departure', value: `${val.flight_plan.departure}`, inline: true },
+  		{ name: 'Destination', value: `${val.flight_plan.arrival}`, inline: true },
+      { name: 'Altitude', value: `${val.altitude}ft`, inline: true },
+  		{ name: 'Ground Speed', value: `${val.groundspeed}kts`, inline: true },
+  		{ name: 'Time Remaining (Estimated)', value: `${getFlightRemainingTime(val.flight_plan.deptime, val.flight_plan.enroute_time)}`, inline: true },
+      { name: 'Flight Plan Route', value: `${val.flight_plan.route}` }
+  	)
+    .setTimestamp()
+    .setFooter({ text: `Last Updated: ${val.last_updated}` });
     
     msg.channel.send({embeds: [flightEmbed]});
     return;
