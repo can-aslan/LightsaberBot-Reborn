@@ -3,6 +3,7 @@
 const { Client, Intents, Channel, MessageEmbed  } = require('discord.js');
 const currencyConverter = require('currency-converter-lt');
 const { handler } = require('vatsim-data-handler');
+// const flightdata = require('flight-data');
 
 // Constants
 // Color Themes
@@ -14,12 +15,15 @@ const VATSIM_COLOR = '#90f4ff';
 // Command Related
 const PREFIX = "l!";
 const AVAILABLE_CUR = ["AFN", "ALL", "DZD", "AOA", "ARS", "AMD", "AWG", "AUD", "AZN", "BSD", "BHD", "BBD", "BDT", "BYR", "BZD", "BMD", "BTN", "XBT", "BOB", "BAM", "BWP", "BRL", "BND", "BGN", "BIF", "XPF", "KHR", "CAD", "CVE", "KYD", "FCFA", "CLP", "CLF", "CNY", "CNY", "COP", "CF", "CDF", "CRC", "HRK", "CUC", "CZK", "DKK", "DJF", "DOP", "XCD", "EGP", "ETB", "FJD", "GMD", "GBP", "GEL", "GHS", "GTQ", "GNF", "GYD", "HTG", "HNL", "HKD", "HUF", "ISK", "INR", "IDR", "IRR", "IQD", "ILS", "JMD", "JPY", "JOD", "KZT", "KES", "KWD", "KGS", "LAK", "LBP", "LSL", "LRD", "LYD", "MOP", "MKD", "MGA" , "MWK", "MYR", "MVR", "MRO", "MUR", "MXN", "MDL", "MAD", "MZN", "MMK", "NAD", "NPR", "ANG", "NZD", "NIO", "NGN", "NOK", "OMR", "PKR", "PAB", "PGK", "PYG", "PHP", "PLN", "QAR", "RON", "RUB", "RWF", "SVC", "SAR", "RSD", "SCR", "SLL", "SGD", "SBD", "SOS", "ZAR", "KRW", "VES", "LKR", "SDG", "SRD", "SZL", "SEK", "CHF", "TJS", "TZS", "THB", "TOP", "TTD", "TND", "TMT", "UGX", "UAH", "AED", "USD", "UYU", "UZS", "VND", "XOF", "YER", "ZMW", "ETH", "EUR", "LTC", "TWD", "PEN", "TRY"];
+// const FLIGHTDATA_API = process.env['FLIGHTDATA_API_KEY'];
 
 // Discord Related
 const client = new Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]});
 const ACTIVITY_LIST = ["Duel of the Fates", "The Imperial March", "Darth Vader Theme", "Jar Jar Binks", "Obi-Wan Kenobi", "Cantina Band"];
 
 // Miscellaneous
+const FT_TO_M = 0.3048;
+const KTS_TO_KMH = 1.852;
 const S_TO_MS = 1000;
 const ACTIVITY_TIME = 30 * S_TO_MS;
 // ======================================================================================================================================================
@@ -113,8 +117,12 @@ function convertToUtcPlus3(hour) {
 }
 */
 
-function getFlightRemainingTime() {
-  
+function getFlightRemainingTime(depTime, enrouteTime, curTime) {
+  let arrivalTime = parseInt(depTime) + parseInt(enrouteTime);
+  let remainingTime = parseInt(arrivalTime) - parseInt(curTime);
+  let result = "0000" + remainingTime;
+  result = result.substring(result.length - 4);  
+  return `${result.substring(0, 2)}h ${result.substring(2)}m`;
 }
 
 function getPilot(msg, vatsimID) {
@@ -149,7 +157,14 @@ function getFlight(msg, callsign) {
     // Flight is found
     // const utc3Hour = toString(convertToUtcPlus3(parseInt(val.last_updated.substr(11, 13))));
     // const lastUpdated = utc3Hour + val.last_updated.substr(13, 19);
-    console.log(val);
+    // console.log(val);
+    
+    // Convert departure and arrival airport ICAO codes to airport names
+    // TODO
+    
+    // Flight information summary
+    const groundSpeed = Math.round((val.groundspeed * KTS_TO_KMH) * 10) / 10;
+    const flightAltitude = Math.round((val.altitude * FT_TO_M) * 10) / 10;
     
     const flightEmbed = new MessageEmbed()
     .setColor(VATSIM_COLOR)
@@ -161,9 +176,14 @@ function getFlight(msg, callsign) {
       { name: 'Aircraft Type', value: `${val.flight_plan.aircraft_short}`, inline: true },
   		{ name: 'Departure', value: `${val.flight_plan.departure}`, inline: true },
   		{ name: 'Destination', value: `${val.flight_plan.arrival}`, inline: true },
-      { name: 'Altitude', value: `${val.altitude}ft`, inline: true },
-  		{ name: 'Ground Speed', value: `${val.groundspeed}kts`, inline: true },
-  		{ name: 'Time Remaining (Estimated)', value: `${getFlightRemainingTime(val.flight_plan.deptime, val.flight_plan.enroute_time)}`, inline: true },
+      { name: 'Altitude', value: `${flightAltitude} m`, inline: true },
+  		{ name: 'Ground Speed', value: `${groundSpeed} km/h`, inline: true },
+  		{ name: 'Time Remaining (Estimated)', value: `${getFlightRemainingTime(
+        val.flight_plan.deptime,
+        val.flight_plan.enroute_time,
+        val.last_updated.substring(11, 16).replace(':', ''))}`,
+        inline: true
+      },
       { name: 'Flight Plan Route', value: `${val.flight_plan.route}` }
   	)
     .setTimestamp()
