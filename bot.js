@@ -73,16 +73,19 @@ client.on('messageCreate', (msg) => {
       .addFields(
         { name: 'l!help', value: 'Displays the list of commands.', inline: true },
         { name: 'l!lightsaber', value: 'Introduction.', inline: true },
-        { name: 'Exchange Rates', value: '\u200B' },
+        { name: '\u200B', value: '\u200B' },
+        { name: '\u200B', value: 'Exchange Rate Related Commands:' },
         { name: 'l!exc', value: 'Displays the latest accessible USD, EUR and GBP to TRY exchange rates.', inline: true },
         { name: 'l!exc list', value: 'Lists the supported currencies for displaying the exchange rates with TRY.', inline: true },
         { name: 'l!exc <CURRENCY>', value: 'Displays the latest accessible <CURRENCY> to TRY exchange rate.', inline: true },
         { name: 'l!exc <CURRENCY> <AMOUNT>', value: 'Displays the latest accessible <AMOUNT> TRY in <CURRENCY>.', inline: true },
         { name: 'l!exc2 <CURRENCY1> <CURRENCY2>', value: 'Displays the latest accessible <CURRENCY1> to <CURRENCY2> exchange rate.', inline: true },
-        { name: 'VATSIM Network', value: '\u200B' },
+        { name: '\u200B', value: '\u200B' },
+        { name: '\u200B', value: 'VATSIM Network Related Commands:' },
         { name: 'l!pilot <VATSIMID>', value: 'Displays the latest accessible pilot information of VATSIM pilot with ID <VATSIMID>.', inline: true },
         { name: 'l!flight <CALLSIGN>', value: 'Displays the latest accessible active flight information of VATSIM flight with callsign <CALLSIGN>.', inline: true },
-        { name: '"/" Commands', value: '\u200B' },
+        { name: '\u200B', value: '\u200B' },
+        { name: '\u200B', value: '"/" Commands:' },
         { name: '/echo', value: 'Echoes your message.', inline: true },
         { name: '/pingus', value: 'Replies with Pongus!', inline: true }
       );
