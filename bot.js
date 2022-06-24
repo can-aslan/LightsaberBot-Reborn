@@ -121,8 +121,18 @@ function getFlightRemainingTime(depTime, enrouteTime, curTime) {
   let arrivalTime = parseInt(depTime) + parseInt(enrouteTime);
   let remainingTime = parseInt(arrivalTime) - parseInt(curTime);
   let result = "0000" + remainingTime;
-  result = result.substring(result.length - 4);  
-  return `${result.substring(0, 2)}h ${result.substring(2)}m`;
+
+  // Check if minutes > 60
+  result = result.substring(result.length - 4);
+  let hours = parseInt(result.substring(0, 2));
+  let minutes = parseInt(result.substring(2));
+  
+  if (minutes > 60) {
+    minutes = minutes % 60;
+    hours++;
+  }
+  
+  return `${hours}h ${minutes}m`;
 }
 
 function getPilot(msg, vatsimID) {
