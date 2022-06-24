@@ -138,7 +138,7 @@ function getPilot(msg, vatsimID) {
     }
 
     // Pilot is found
-    console.log(val);
+    getFlight(msg, val.callsign);
   });
 }
 
@@ -170,7 +170,7 @@ function getFlight(msg, callsign) {
     .setColor(VATSIM_COLOR)
     .setTitle(`${val.callsign} [${val.flight_plan.departure} -> ${val.flight_plan.arrival}]`)
     .setURL('http://www.vattastic.com/')
-    //.setDescription(`VATSIM flight with callsign ${callsign} found.`)
+    .setDescription(`VATSIM flight with callsign ${callsign} found.`)
     .addFields(
       { name: 'Pilot Name', value: `${val.name}` },
       { name: 'Aircraft Type', value: `${val.flight_plan.aircraft_short}`, inline: true },
