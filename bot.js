@@ -61,9 +61,9 @@ client.on('messageCreate', (msg) => {
   const msgCmd = msgArgs[0];
   
   if ( msgCmd.substr(0, 2) !== PREFIX ) return;
-
+  
   // COMMANDS
-  const userCmd = msgCmd.substr(2);
+  const userCmd = msgCmd.substr(2).toLowerCase();
   switch (userCmd) {
     // l!help: Displays the list of commands.
     case 'help':
@@ -71,15 +71,20 @@ client.on('messageCreate', (msg) => {
       .setColor(BOT_COLOR_THEME[Math.floor(Math.random() * BOT_COLOR_THEME.length)])
       .setTitle('List of Commands:')
       .addFields(
-        { name: 'l!help', value: 'Displays the list of commands.' },
-        { name: 'l!lightsaber', value: 'Introduction.' },
-        { name: 'l!exc', value: 'Displays the latest accessible USD, EUR and GBP to TRY exchange rates.' },
-        { name: 'l!exc list', value: 'Lists the supported currencies for displaying the exchange rates with TRY.' },
-        { name: 'l!exc <CURRENCY>', value: 'Displays the latest accessible <CURRENCY> to TRY exchange rate.' },
-        { name: 'l!exc <CURRENCY> <AMOUNT>', value: 'Displays the latest accessible <AMOUNT> TRY in <CURRENCY>.' },
-        { name: 'l!exc2 <CURRENCY1> <CURRENCY2>', value: 'Displays the latest accessible <CURRENCY1> to <CURRENCY2> exchange rate.' },       
-        { name: '/echo', value: 'Echoes your message.' },
-        { name: '/pingus', value: 'Replies with Pongus!' }
+        { name: 'l!help', value: 'Displays the list of commands.', inline: true },
+        { name: 'l!lightsaber', value: 'Introduction.', inline: true },
+        { name: 'Exchange Rates', value: '\u200B' },
+        { name: 'l!exc', value: 'Displays the latest accessible USD, EUR and GBP to TRY exchange rates.', inline: true },
+        { name: 'l!exc list', value: 'Lists the supported currencies for displaying the exchange rates with TRY.', inline: true },
+        { name: 'l!exc <CURRENCY>', value: 'Displays the latest accessible <CURRENCY> to TRY exchange rate.', inline: true },
+        { name: 'l!exc <CURRENCY> <AMOUNT>', value: 'Displays the latest accessible <AMOUNT> TRY in <CURRENCY>.', inline: true },
+        { name: 'l!exc2 <CURRENCY1> <CURRENCY2>', value: 'Displays the latest accessible <CURRENCY1> to <CURRENCY2> exchange rate.', inline: true },
+        { name: 'VATSIM Network', value: '\u200B' },
+        { name: 'l!pilot <VATSIMID>', value: 'Displays the latest accessible pilot information of VATSIM pilot with ID <VATSIMID>.', inline: true },
+        { name: 'l!flight <CALLSIGN>', value: 'Displays the latest accessible active flight information of VATSIM flight with callsign <CALLSIGN>.', inline: true },
+        { name: '"/" Commands', value: '\u200B' },
+        { name: '/echo', value: 'Echoes your message.', inline: true },
+        { name: '/pingus', value: 'Replies with Pongus!', inline: true }
       );
       
       msg.channel.send({embeds: [helpEmbed]});
