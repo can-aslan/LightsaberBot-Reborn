@@ -324,6 +324,16 @@ function getExchange(msg, currency, amount) {
   }
   // --------------------------------------------
 
+  // Check if <AMOUNT> is a number
+  if ( !(amount instanceof Number) ) {
+    const exchangeErrorEmbed = new MessageEmbed()
+    .setColor(ERROR_COLOR)
+    .setDescription(`Invalid use. <AMOUNT> must be a number.`);
+    
+    msg.channel.send({embeds: [exchangeErrorEmbed]});
+    return;
+  }
+    
   amount = parseFloat(amount);
 
   // if (amount == NaN || amount == null) amount = 1;
