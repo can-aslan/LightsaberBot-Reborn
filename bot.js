@@ -333,13 +333,10 @@ function getExchange(msg, currency, amount) {
     msg.channel.send({embeds: [exchangeErrorEmbed]});
     return;
   }
-    
-  amount = parseFloat(amount);
-
-  // if (amount == NaN || amount == null) amount = 1;
   
   // --------------------------------------------
   // l!exc <CURRENCY> <AMOUNT>: Displays the latest accessible <AMOUNT> TRY in <CURRENCY>.
+  amount = parseFloat(amount);
   const worthConverter = new currencyConverter({from: "TRY", to: currency, amount: amount});
   const worthCurName = worthConverter.currencyName(currency);
   
