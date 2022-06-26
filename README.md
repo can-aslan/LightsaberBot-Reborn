@@ -19,6 +19,8 @@
 | `l!exc <CURRENCY>` | Displays the latest accessible `CURRENCY` to `TRY` exchange rate. |
 | `l!exc <CURRENCY> <AMOUNT>` | Displays the latest accessible `<AMOUNT>` `TRY` in `<CURRENCY>`. |
 | `l!exc2 <CURRENCY1> <CURRENCY2>` | Displays the latest accessible `<CURRENCY1>` to `<CURRENCY2>` exchange rate. |
+| `l!pilot <VATSIMID>` | Displays the latest accessible pilot information of VATSIM pilot with ID `<VATSIMID>`. |
+| `l!flight <CALLSIGN>` | Displays the latest accessible active flight information of VATSIM flight with callsign `<CALLSIGN>`. |
 | `/echo` | Echoes your message. |
 | `/pingus` | Replies with Pongus! |
 
@@ -27,5 +29,6 @@
 + Activity changes in 30s intervals to different StarWars related themes.
 + Emoji reactions to embedded messages.
 + Access to various currency/exchange related functionalities.
++ Access to live VATSIM network flight information via commands.
 
 
