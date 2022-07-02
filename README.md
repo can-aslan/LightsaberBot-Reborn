@@ -37,7 +37,7 @@
 | `/echo` | Echoes your message. |
 | `/pingus` | Replies with Pongus! |
 
-## Features
+# Features
 + Randomly changing embed colors to represens StarWars lightsaber colors.
 + Activity changes in 30s intervals to different StarWars related themes.
 + Emoji reactions to embedded messages.
