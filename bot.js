@@ -65,7 +65,7 @@ client.on('messageCreate', (msg) => {
   // COMMANDS
   const userCmd = msgCmd.substr(2).toLowerCase();
   switch (userCmd) {
-    // l!help: Displays the list of commands.
+    // L!help: Displays the list of commands.
     case 'help':
       const helpEmbed = new MessageEmbed()
       .setColor(BOT_COLOR_THEME[Math.floor(Math.random() * BOT_COLOR_THEME.length)])
@@ -82,6 +82,7 @@ client.on('messageCreate', (msg) => {
         { name: 'L!exc2 <CURRENCY1> <CURRENCY2>', value: 'Displays the latest accessible <CURRENCY1> to <CURRENCY2> exchange rate.', inline: true },
         { name: '\u200B', value: '\u200B' },
         { name: '\u200B', value: 'VATSIM Network Related Commands:' },
+        { name: 'L!track <VATSIMID>', value: 'Access to live tracking of the latest accessible pilot information of VATSIM pilot with ID <VATSIMID>.', inline: true },
         { name: 'L!pilot <VATSIMID>', value: 'Displays the latest accessible pilot information of VATSIM pilot with ID <VATSIMID>.', inline: true },
         { name: 'L!flight <CALLSIGN>', value: 'Displays the latest accessible active flight information of VATSIM flight with callsign <CALLSIGN>.', inline: true },
         { name: '\u200B', value: '\u200B' },
@@ -92,29 +93,35 @@ client.on('messageCreate', (msg) => {
       
       msg.channel.send({embeds: [helpEmbed]});
       break;
-    // l!lightsaber: Introduction.
+    // L!lightsaber: Introduction.
     case 'lightsaber':
       msg.reply({content: `Hello \`${msg.author.username}\`, I am LightsaberBot!`});
       break;
-    // l!exc: Displays the latest accessible USD, EUR and GBP to TRY exchange rates.
-    // l!exc list: Lists the supported currencies for displaying the exchange rates with TRY.
-    // l!exc <CURRENCY>: Displays the latest accessible CURRENCY to TRY exchange rate.
-    // l!exc <CURRENCY> <AMOUNT>: Displays the latest accessible <AMOUNT> TRY in <CURRENCY>.
+    // L!exc: Displays the latest accessible USD, EUR and GBP to TRY exchange rates.
+    // L!exc list: Lists the supported currencies for displaying the exchange rates with TRY.
+    // L!exc <CURRENCY>: Displays the latest accessible CURRENCY to TRY exchange rate.
+    // L!exc <CURRENCY> <AMOUNT>: Displays the latest accessible <AMOUNT> TRY in <CURRENCY>.
     case 'exc':        
       getExchange(msg, msgArgs[1], msgArgs[2]);
       break;
-    // l!exc2 <CURRENCY1> <CURRENCY2>: Displays the latest accessible CURRENCY1 to CURRENCY2 exchange rate.
+    // L!exc2 <CURRENCY1> <CURRENCY2>: Displays the latest accessible CURRENCY1 to CURRENCY2 exchange rate.
     case 'exc2':        
       getExchange2(msg, msgArgs[1], msgArgs[2]);
       break;
+    // L!track <VATSIMID>: Access to live tracking of the latest accessible pilot information of VATSIM pilot with ID <VATSIMID>.
+    case 'track':
+      trackPilot(msg, msgArgs[1]);
+      break;
+    // L!pilot <VATSIMID>: Displays the latest accessible pilot information of VATSIM pilot with ID <VATSIMID>.
     case 'pilot':
       getPilot(msg, msgArgs[1]);
       break;
+    // L!flight <CALLSIGN>: Displays the latest accessible active flight information of VATSIM flight with callsign <CALLSIGN>.
     case 'flight':
       getFlight(msg, msgArgs[1]);
       break;
     default:
-      msg.channel.send({content: "Unrecognized command. Please check `l!help`."});
+      msg.channel.send({content: "Unrecognized command. Please check `L!help`."});
       break;
   }
 });
@@ -124,6 +131,19 @@ function convertToUtcPlus3(hour) {
   return (hour + 3) % 24;
 }
 */
+
+function trackPilot(msg, vatsimid) {
+  if (!vatsimid) {
+    const trackErrorEmbed = new MessageEmbed()
+    .setColor(ERROR_COLOR)
+    .setDescription(`VATSIM pilot with id ${vatsimID} is either not connected to the network or does not exist.`);
+    
+    msg.channel.send({embeds: [trackErrorEmbed]});
+    return;
+  }
+
+  
+}
 
 function getFlightRemainingTime(depTime, enrouteTime, curTime) {
   let arrivalTime = parseInt(depTime) + parseInt(enrouteTime);
