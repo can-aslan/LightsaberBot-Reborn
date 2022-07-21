@@ -1,6 +1,6 @@
 // ======================================================================================================================================================
 // Libraries
-const { Client, Intents, Channel, MessageEmbed  } = require('discord.js');
+const { Client, Intents, Channel, MessageEmbed, MessageActionRow, MessageButton  } = require('discord.js');
 const currencyConverter = require('currency-converter-lt');
 const { handler } = require('vatsim-data-handler');
 // const flightdata = require('flight-data');
@@ -42,9 +42,60 @@ client.on('ready', () => {
   }, ACTIVITY_TIME);
 });
 
-client.on('interactionCreate', async interaction => {
-  if (!interaction.isCommand()) return;
+client.on('interactionCreate', async interaction => {   
+  if (!interaction.isCommand() && !interaction.isButton()) return;
 
+  if (!interaction.isCommand() && interaction.customId.substr(0, 11) == 'trackFlight') {
+    const callsign = interaction.customId.substr(11);
+
+    handler.getFlightInfo(callsign).then(val => {
+      // If VATSIM pilot is not connected to the network or does not exist
+      if (!val) {
+        const flightErrorEmbed = new MessageEmbed()
+        .setColor(ERROR_COLOR)
+        .setDescription(`VATSIM flight with callsign ${callsign} does not exist.`);
+        
+        interaction.reply({ embeds: [flightErrorEmbed], ephemeral: true })
+        return;
+      }
+  
+      // Flight is found
+  
+      // Convert departure and arrival airport ICAO codes to airport names
+      // TODO
+      
+      // Flight information summary
+      const groundSpeed = Math.round((val.groundspeed * KTS_TO_KMH) * 10) / 10;
+      const flightAltitude = Math.round((val.altitude * FT_TO_M) * 10) / 10;
+      
+      const flightEmbed = new MessageEmbed()
+      .setColor(VATSIM_COLOR)
+      .setTitle(`${val.callsign} [${val.flight_plan.departure} -> ${val.flight_plan.arrival}]`)
+      .setURL('http://www.vattastic.com/')
+      .setDescription(`VATSIM flight with callsign ${callsign} found.`)
+      .addFields(
+        { name: 'Pilot Name', value: `${val.name}` },
+        { name: 'Aircraft Type', value: `${val.flight_plan.aircraft_short}`, inline: true },
+    		{ name: 'Departure', value: `${val.flight_plan.departure}`, inline: true },
+    		{ name: 'Destination', value: `${val.flight_plan.arrival}`, inline: true },
+        { name: 'Altitude', value: `${flightAltitude} m`, inline: true },
+    		{ name: 'Ground Speed', value: `${groundSpeed} km/h`, inline: true },
+    		{ name: 'Time Remaining (Estimated)', value: `${getFlightRemainingTime(
+          val.flight_plan.deptime,
+          val.flight_plan.enroute_time,
+          val.last_updated.substring(11, 16).replace(':', ''))}`,
+          inline: true
+        },
+        { name: 'Flight Plan Route', value: `${val.flight_plan.route}` }
+    	)
+      .setTimestamp()
+      .setFooter({ text: `Last Updated: ${val.last_updated}` });
+      
+      interaction.reply({ embeds: [flightEmbed], ephemeral: true })
+      return;
+    });
+  }
+  
   switch (interaction.commandName) {
     case 'pingus':
       await interaction.reply("Pongus!");
@@ -126,12 +177,6 @@ client.on('messageCreate', (msg) => {
   }
 });
 
-/*
-function convertToUtcPlus3(hour) {
-  return (hour + 3) % 24;
-}
-*/
-
 function trackPilot(msg, callsign) {
   if (!callsign) {
     const trackErrorEmbed = new MessageEmbed()
@@ -144,20 +189,18 @@ function trackPilot(msg, callsign) {
 
   const trackEmbed = new MessageEmbed()
   .setColor(VATSIM_COLOR)
+  .setTitle('Live VATSIM Flight Tracker')
   .setDescription(`Tracking flight with callsign ${callsign}.`);
 
   const trackButton = new MessageActionRow()
   .addComponents(
     new MessageButton()
-      .setCustomId('trackFlight')
-      .setLabel('Track Flight \u2708')
+      .setCustomId(`trackFlight${callsign}`)
+      .setLabel('Track Flight ✈️')
       .setStyle('PRIMARY'),
   );
   
   msg.channel.send({embeds: [trackEmbed], components: [trackButton]});
-  return;
-  
-  getPilot(msg, msgArgs[1]);
 }
 
 function getFlightRemainingTime(depTime, enrouteTime, curTime) {
