@@ -82,7 +82,7 @@ client.on('messageCreate', (msg) => {
         { name: 'L!exc2 <CURRENCY1> <CURRENCY2>', value: 'Displays the latest accessible <CURRENCY1> to <CURRENCY2> exchange rate.', inline: true },
         { name: '\u200B', value: '\u200B' },
         { name: '\u200B', value: 'VATSIM Network Related Commands:' },
-        { name: 'L!track <VATSIMID>', value: 'Access to live tracking of the latest accessible pilot information of VATSIM pilot with ID <VATSIMID>.', inline: true },
+        { name: 'L!track <CALLSIGN>', value: 'Access to live tracking of the latest accessible pilot information of VATSIM flight with callsign <CALLSIGN>.', inline: true },
         { name: 'L!pilot <VATSIMID>', value: 'Displays the latest accessible pilot information of VATSIM pilot with ID <VATSIMID>.', inline: true },
         { name: 'L!flight <CALLSIGN>', value: 'Displays the latest accessible active flight information of VATSIM flight with callsign <CALLSIGN>.', inline: true },
         { name: '\u200B', value: '\u200B' },
@@ -108,7 +108,7 @@ client.on('messageCreate', (msg) => {
     case 'exc2':        
       getExchange2(msg, msgArgs[1], msgArgs[2]);
       break;
-    // L!track <VATSIMID>: Access to live tracking of the latest accessible pilot information of VATSIM pilot with ID <VATSIMID>.
+    // L!track <CALLSIGN>: Access to live tracking of the latest accessible pilot information of VATSIM flight with callsign <CALLSIGN>.
     case 'track':
       trackPilot(msg, msgArgs[1]);
       break;
@@ -132,17 +132,32 @@ function convertToUtcPlus3(hour) {
 }
 */
 
-function trackPilot(msg, vatsimid) {
-  if (!vatsimid) {
+function trackPilot(msg, callsign) {
+  if (!callsign) {
     const trackErrorEmbed = new MessageEmbed()
     .setColor(ERROR_COLOR)
-    .setDescription(`VATSIM pilot with id ${vatsimID} is either not connected to the network or does not exist.`);
+    .setDescription(`Please enter a valid CALLSIGN.`);
     
     msg.channel.send({embeds: [trackErrorEmbed]});
     return;
   }
 
+  const trackEmbed = new MessageEmbed()
+  .setColor(VATSIM_COLOR)
+  .setDescription(`Tracking flight with callsign ${callsign}.`);
+
+  const trackButton = new MessageActionRow()
+  .addComponents(
+    new MessageButton()
+      .setCustomId('trackFlight')
+      .setLabel('Track Flight \u2708')
+      .setStyle('PRIMARY'),
+  );
   
+  msg.channel.send({embeds: [trackEmbed], components: [trackButton]});
+  return;
+  
+  getPilot(msg, msgArgs[1]);
 }
 
 function getFlightRemainingTime(depTime, enrouteTime, curTime) {
