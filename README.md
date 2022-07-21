@@ -28,6 +28,7 @@
 ## VATSIM Network Related Commands
 | Command | Description |
 | :--- | :--- |
+| `L!track <CALLSIGN>` | Access to live tracking of the latest accessible pilot information of VATSIM flight with callsign `<CALLSIGN>`. |
 | `L!pilot <VATSIMID>` | Displays the latest accessible pilot information of VATSIM pilot with ID `<VATSIMID>`. |
 | `L!flight <CALLSIGN>` | Displays the latest accessible active flight information of VATSIM flight with callsign `<CALLSIGN>`. |
 
